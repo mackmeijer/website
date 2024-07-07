@@ -1,0 +1,227 @@
+<html>
+<link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+<script defer src="https://pyscript.net/latest/pyscript.js"></script>
+<head>
+    <py-env>
+    - numpy
+    </py-env>
+</head>
+<body>
+<py-script> 
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import urllib.request
+    import timeit
+    from scipy.ndimage.filters import convolve
+    from scipy.ndimage import uniform_filter
+    import mpl_toolkits.mplot3d.art3d as art3d
+    
+    np.set_printoptions(precision=3,
+                        suppress=True) # change this in case you need more precision
+    
+    def imshow_row(imttllist, axs=False):
+        n = len(imttllist)
+        for i, imttl in enumerate(imttllist):
+            if imttl is None:
+                continue
+            im, ttl = imttl
+            plt.subplot(1,n,i+1)
+            plt.imshow(im, cmap='gray')
+            if not axs:
+                plt.axis('off')
+            plt.title(ttl)
+        
+    
+    
+        
+    try:
+        Fcam = plt.imread('cameraman.png')
+    except FileNotFoundError:
+        urllib.request.urlretrieve("https://staff.fnwi.uva.nl/r.vandenboomgaard/ComputerVision/_images/cameraman.png")
+        Fcam = plt.imread('cameraman.png')
+
+    import timeit
+    import matplotlib.image as mpimg
+    from IPython.display import Image
+    from skimage import color
+    from skimage import io
+    
+    # img = color.rgb2gray(io.imread('image.png'))
+    img =  color.rgb2gray(mpimg.imread('cameraman.png'))
+    
+    def convolve_N(F, N):
+        return convolve(F, np.ones((N,N)))
+        
+    def convolve_1(F, N):
+        return convolve(convolve(F, np.ones((N, 1))), np.ones((N, 1)))
+        
+    def convolve_uni(F, N):
+        return uniform_filter(F, N)       
+
+    def Gauss1d(scale, order=0, factor=3):
+        N = np.ceil(scale * factor).astype(int)
+        s = scale
+        x = np.arange(-N, N+1)     
+        
+        G = 1/(s*np.sqrt(2*np.pi))*np.exp((-x**2)/(2*s**2))
+        
+        if order == 0:
+            Poly = 1
+        elif order == 1:
+            Poly = -x/s**2
+        elif order == 2 :
+            Poly = ((x**2/s**4) - (1/s**2))
+        
+        G = Poly * G
+        return x, G
+        pass
+
+    from scipy.ndimage import convolve1d
+
+    def gD(f, scales, orders, factor=3, mode='nearest', cval=0):
+            """ 
+            f: the function to convolve
+            scales: the scales in the x and y direction, respectively
+            orders: the orders of the derivatives (0 <= order <= 2)
+            factor: the factor with which you compute the scale to get the size of the domain.
+            mode, cval: the border mode to use in the convolution, and the constant value in case the mode is `constant`.
+            
+            returns: the convolution of f with the appropriate Gaussian derivative.
+            """
+            Sx, Sy = scales
+            orderx, ordery = orders
+            Nx = np.ceil(Sx * factor).astype(int)
+            Ny = np.ceil(Sy * factor).astype(int)
+            x = np.arange(-Nx, Nx+1) 
+            y = np.arange(-Ny, Ny+1)  
+            x0, Gx = Gauss1d(Sx, orderx, factor)
+            y0, Gy = Gauss1d(Sy, ordery, factor)
+            f = convolve1d(f, Gy, axis = 1, mode = 'nearest', cval = 0)
+            f = convolve1d(f, Gx, axis = 0, mode = 'nearest', cval = 0)
+            return(f)
+            
+            pass
+
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import urllib.request
+    import timeit
+    from scipy.ndimage.filters import convolve
+    from scipy.ndimage import uniform_filter
+    import mpl_toolkits.mplot3d.art3d as art3d
+            
+    np.set_printoptions(precision=3,
+                        suppress=True) # change this in case you need more precision
+    
+    def imshow_row(imttllist, axs=False):
+        n = len(imttllist)
+        for i, imttl in enumerate(imttllist):
+            if imttl is None:
+                continue
+            im, ttl = imttl
+            plt.subplot(1,n,i+1)
+            plt.imshow(im, cmap='gray')
+            if not axs:
+                plt.axis('off')
+            plt.title(ttl)
+        
+    import torch
+    import torchvision
+    import torchvision.transforms as transforms
+    import torch.nn as nn
+    import torch.nn.functional as F
+    import torch.optim as optim
+    
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from scipy.ndimage import generic_filter
+    class Net(nn.Module):
+        def __init__(self, verbose=0):
+            super().__init__()
+            self.conv1 = nn.Conv2d(3, 20, 3)
+            self.pool1 = nn.MaxPool2d(2, 2)
+            self.conv2 = nn.Conv2d(20, 26, 5)
+            self.pool2 = nn.MaxPool2d(2, 2)
+            self.fc1 = nn.Linear(26 * 5 * 5, 120)
+            self.fc2 = nn.Linear(120, 84)
+            self.fc3 = nn.Linear(84, 10)
+            self.verbose = verbose
+            
+    def zero_crossing(self, nbh):
+        """
+        Takes a 3x3 neighborhood of a point given as a 1D array with 9 elements, and 
+        determines whether that point is a zero crossing. (Input as a 1D array, since
+        this is the format used by generic_filter.)
+        """
+        f1, f2, f3, f4, f5, f6, f7, f8, f9 = nbh
+        if f1 * f9 < 0:
+            return 1
+        if f2 * f8 < 0:
+            return 1
+        if f3 * f7 < 0:
+            return 1
+        if f4 * f6 < 0:
+            return 1
+        return 0
+    
+    
+    from skimage import data
+    from skimage.color import rgb2gray
+    from skimage import data
+    
+    F = plt.imread('foto.jpeg')
+    F = rgb2gray(F)
+
+    from scipy.ndimage import generic_filter
+
+    def zero_crossing(nbh):
+        """
+        Takes a 3x3 neighborhood of a point given as a 1D array with 9 elements, and 
+        determines whether that point is a zero crossing. (Input as a 1D array, since
+        this is the format used by generic_filter.)
+        """
+        f1, f2, f3, f4, f5, f6, f7, f8, f9 = nbh
+        if f1 * f9 < 0:
+            return 1
+        if f2 * f8 < 0:
+            return 1
+        if f3 * f7 < 0:
+            return 1
+        if f4 * f6 < 0:
+            return 1
+        return 0
+    
+    
+    def canny(F, scale): 
+        Gx = gD(F, (scale, scale), (0,1), 3)
+        Gy = gD(F, (scale, scale), (1,0), 3)
+        Gxx = gD(F, (scale, scale), (0,2), 3)
+        Gxy = gD(F, (scale, scale), (1,1), 3)
+        Gyy = gD(F, (scale, scale), (2,0), 3)
+        G1 = (Gx**2)*Gxx+2*Gx*Gy*Gxy+(Gy**2)*Gyy
+        F1 = generic_filter(Gxx, zero_crossing, (3, 3))   
+        
+        return (F1)
+        pass
+    
+    img =  color.rgb2gray(mpimg.imread('foto.jpeg'))
+
+    F = img
+    zc1 = canny(F, 1)
+    zc2 = canny(F, 2)
+    zc4 = canny(F, 4)
+    zc8 = canny(F, 8)
+    zc16 = canny(F, 16)
+    imshow_row([(zc4, "Canny (s=4)"),
+                (zc8, "Canny (s=8)")])
+    plt.figure(figsize = (200,20))
+    # plt.imshow(zc16)
+    plt.savefig("myimage.eps", dpi=700)
+    plt.show()
+    # plt.pcolormesh(zc8)
+    # imshow_row([(zc4, "Canny (s=4)"),
+    #             (zc8, "Canny (s=8)")])
+
+</py-script>| 
+
+</html>

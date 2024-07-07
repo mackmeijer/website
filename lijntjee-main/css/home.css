@@ -1,0 +1,68 @@
+.container {
+    display: grid; 
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    gap: 7px 7px; 
+    justify-content:space-evenly;
+    grid-template-areas: 
+      "Home Home Home Home Home"
+      "Info Info Info Register Register"
+      "Info Info Info Register Register"
+      "Info Info Info Register Register"; 
+  }
+
+  .container_mobile {
+    display: grid; 
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 0.2fr 1fr 1fr;
+    gap: 7px 7px; 
+    justify-content:space-evenly;
+    grid-template-areas: 
+      "Home Home Home Home Home"
+      "Register Register Register Register Register "
+      "Info Info Info Info Info"; 
+  }
+  
+
+  .container_about_us {
+    display: grid; 
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    gap: 7px 7px; 
+    justify-content:space-evenly;
+    grid-template-areas: 
+      "Home Home Home Home Home"
+      "Info Info Info Info Info"
+      "Info Info Info Info Info"
+      "Info Info Info Info Info";
+  }
+
+  .Home { grid-area: Home;
+    background-color: rgba(80, 121, 167, 0.8);
+    height: 250px;
+    text-align: center;
+    font-size: 35px; 
+    border-radius: 4px;
+    }
+    
+  .Info { grid-area: Info; 
+    background: rgba(252, 84, 69, 0.842);
+    font-size: 35px;
+    text-align: center;
+    padding: 30px;
+    box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    }
+  
+  .Register { grid-area: Register; 
+    background-color:rgba(252, 83, 69, 0.842);
+    padding: 100px;
+    box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    }
+  
+  h2 {
+    color: rgba(252, 83, 69, 0.842);
+    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+    text-decoration: underline overline;
+  }
